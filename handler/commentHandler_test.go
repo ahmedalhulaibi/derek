@@ -805,3 +805,38 @@ func Test_getCommandValue(t *testing.T) {
 	}
 
 }
+
+func Test_Parsing_ExplainTopic(t *testing.T) {
+
+	var reviewersOptions = []struct {
+		title        string
+		body         string
+		expectedType string
+		expectedVal  string
+	}{
+		{
+			title:        "Parse request to assign help topic",
+			body:         "explain: slack",
+			expectedType: "explain",
+			expectedVal:  "slack",
+		},
+		{
+			title:        "Parse request to assign help topic",
+			body:         "explain: paperwork",
+			expectedType: "explain",
+			expectedVal:  "paperwork",
+		},
+	}
+
+	for _, test := range reviewersOptions {
+		t.Run(test.title, func(t *testing.T) {
+
+			for _, trigger := range getCommandTriggers() {
+				action := parse(trigger+test.body, getCommandTriggers())
+				if action.Type != test.expectedType || action.Value != test.expectedVal {
+					t.Errorf("Action - wanted: %s, got %s\nResult - wanted: %s, got %s", test.expectedType, action.Type, test.expectedVal, action.Value)
+				}
+			}
+		})
+	}
+}
